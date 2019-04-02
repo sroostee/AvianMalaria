@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 date: 01/04/2019
 author. S.J. Roostee
@@ -12,7 +13,6 @@ over time.
 
 
 import numpy as np
-import scipy
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 
