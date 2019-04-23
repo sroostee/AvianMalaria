@@ -12,6 +12,7 @@ Following van Baalen (1995) et al. and Alizon (2008) (Multiple infections etc)
 Assumption:
 
 No double infection by the mutant strain as this is a rare strain
+Order of infection matters for double infections
 """
 ###########################
 
