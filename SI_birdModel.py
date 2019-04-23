@@ -4,9 +4,9 @@
 date: 01/04/2019
 author. S.J. Roostee
 
-A simple SIR-model modelling the number of Susceptibles, Infected  individuals
-over time. 
-
+An SIB-model modelling the number of Susceptibles, Infected, and infected with Both malaria strains
+individuals over time. 
+Inspired by van Baalen (1995) et al. and Alizon (2008) (Multiple infections etc)
 
 """
 ###########################
@@ -16,74 +16,74 @@ import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 
-N_0 = 1000
-I1_0 = 1
-I2_0 = 1
-I12_0 = 0
-S0 = N_0 - I1_0 - I2_0 - I12_0
+import numpy as np
+from scipy.integrate import odeint
+import matplotlib.pyplot as plt
 
-#contact rates
-beta_1 = 0.08 #contact+infection rate of strain 1
-beta_2 = 0.2 #contact+infection rate of strain 2
-beta_12 = 0.1 #contact+infection rate of already infected strain 1 to strain 2
-beta_21 = 0.1 #contact+infection rate of already infected strain 2 to strain 1
+###########################		start parameters	###############################
 
-#virulence rates
-alpha_1 = 0.9
-alpha_2 = 0.01
-alpha_12 = 0.01
+S0 = 28 #Susceptibles at time 0
+I_1_0 = 1 #Individuals infected with strain 1 (the resident strain)
+I_2_0 = 1 #Individuals infected with strain 2 (the rare mutant)
+I_12_0 = 0 #Individuals infected with both
 
-#vital dynamics
-labda = 0.07 #birth rate
-mu = 0.07 #death rate
+#transmission rates
+beta_1 = 0.02
+beta_1_12 = 0.02
+beta_12 = 0.02
+beta_2 = 0.02
+beta_2_12 = 0.02
+beta_21 = 0.02
+beta_12s = 0.02
+
+#mortality rates caused by parasite
+alpha_1 = 0.02
+alpha_12 = 0.02
+alpha_2 = 0.02
+
+#host natural death rate
+mu = 0.02
+#host reproduction rate
+labda = 0.02
+#multiple infection efficiency
+epsilon_1 = 0.33
+epsilon_2 = 0.33
+epsilon_12 = 0.33
 
 #time
 ntimepoints = 1000
-t = np.linspace(0,300, ntimepoints)
+t = np.linspace(0,200, ntimepoints)
 
-# def deriv(y, t, beta_1, beta_2, labda, mu, alpha_1, alpha_2):
-# 	S = y[0]
-# 	I_1 = y[1]
-# 	I_2 = y[2]
-# 	I_12 = y[3]
-#	N = S+I_1+I_2+I_12
-# 	dSdt = labda*N -(beta_1*S*I_1)/N -(beta_2*S*I_2)/N - mu*S
-# 	dI_1dt = (beta_1*S*I_1)/N - (mu+alpha_1)*I_1
-# 	dI_2dt = (beta_2*S*I_2)/N - (mu+alpha_2)*I_2
-# 	dI12_dt = (beta_12*I_1*I_2)/N + (beta_21*I_2*I_1)/N - (mu+alpha_12)*I_12
-# 	#return dSdt, dI_1dt, dI_2dt, dI12_dt
+def eq_sys(y, t, beta_1, beta_2, beta_1_12, beta_2_12, beta_12s, 
+	alpha_1, alpha_2, alpha_12, mu, labda, epsilon_1, epsilon_2, epsilon_12):
 
-def deriv(y, t, beta_1, labda, mu, alpha_1):
+	#Defining the system of equations 
+
 	S = y[0]
 	I_1 = y[1]
-	N = S + I_1
-	R_0 = beta_1*
-	dSdt = labda*N -(beta_1*S*I_1)/N - mu*S
-	dI_1dt = (beta_1*S*I_1)/N - (mu+alpha_1)*I_1
-	R_0dt = (beta_1*(I_1/N))/(mu+alpha_1)
-	return dSdt, dI_1dt, R_0dt
-	#return dSdt, dI_1dt, dI_2dt, dI12_dt
+	I_2 = y[2]
+	I_12 = y[3]
 
-y0 = (S0, I1_0, 0)
-#y0 = (S0, I1_0, I2_0, I12_0)
-#out = odeint(deriv, y0, t, args =(beta_1, beta_2, labda, mu, alpha_1, alpha_2))
-#S,I_1,I_2,I_12= out.T
-out = odeint(deriv, y0, t, args =(beta_1,labda, mu, alpha_1))
-S,I_1,R_0= out.T
+	Sdt = (S+I_1+I_2+I_12)*labda - mu*S - beta_1*S*I_1 - epsilon_1*beta_12s*S*I_12 - epsilon_12*beta_12s*S*I_12 - epsilon_2*beta_12s*S*I_2 - beta_2*S*I_2
+	I_1dt = beta_1*S*I_1 + epsilon_1*beta_12s*S*I_12 - (mu+alpha_1)*I_1 - beta_12*I_1*I_2 - beta_1_12*I_1*I_12
+	I_2dt = beta_2*S*I_2 + epsilon_2*beta_12s*S*I_2 - (mu+alpha_2)*I_2 - beta_21*I_1*I_2 - beta_2_12*I_2*I_12
+	I_12dt = beta_12*I_1*I_2 + beta_1_12*I_1*I_12 + beta_21*I_1*I_2 + beta_2_12*I_2*I_12 - (mu+alpha_12)*I_12
+
+	return Sdt, I_1dt, I_2dt, I_12dt
+
+y0 = (S0, I_1_0, I_2_0, I_12_0)
+
+out = odeint(eq_sys, y0, t, args =(beta_1, beta_2, beta_1_12, beta_2_12, beta_12s, 
+	alpha_1, alpha_2, alpha_12, mu, labda, epsilon_1, epsilon_2, epsilon_12))
+S,I_1,I_2,I_12= out.T
+
+###########################		Plot system		################################ 
 
 plt.plot(t, S, label="Susceptibles")
 plt.plot(t, I_1, label="Infected with strain 1")
-#plt.plot(t, I_2, label="Infected with strain 2")
-#plt.plot(t, I_12, label="Infected with both")
-plt.plot(t, R_0, label="Reproduction ratio")
+plt.plot(t, I_2, label="Infected with strain 2")
+plt.plot(t, I_12, label="Infected with both")
 plt.legend(loc="best")
 plt.xlabel("t")
 plt.grid()
 plt.show()
-
-############################################
-
-#R_0 = (beta_1*S0)/(mu+alpha_1)
-
-
-#np.log(s_inf - 1) - np.log(s_inf)
