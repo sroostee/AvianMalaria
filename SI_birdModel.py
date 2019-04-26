@@ -46,9 +46,9 @@ mu = 0.02
 #host reproduction rate
 labda = 0.02
 #multiple infection efficiency
-epsilon_1 = 0.33
-epsilon_2 = 0.33
-epsilon_12 = 0.33
+epsilon_1 = 1/3
+epsilon_2 = 1/3
+epsilon_12 = 1/3
 
 #time
 ntimepoints = 1000
