@@ -21,6 +21,7 @@ Assumptions:
 import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
+import withinHost_model.py as inHost
 
 ###########################		start parameters	###############################
 

@@ -45,10 +45,6 @@ alpha_2 = 0.02
 mu = 0.02
 #host reproduction rate
 labda = 0.02
-#multiple infection efficiency
-epsilon_1 = 1/3
-epsilon_2 = 1/3
-epsilon_12 = 1/3
 
 #time
 ntimepoints = 1000
@@ -64,9 +60,9 @@ def eq_sys(y, t, beta_1, beta_2, beta_1_12, beta_2_12, beta_12s,
 	I_2 = y[2]
 	I_12 = y[3]
 
-	Sdt = (S+I_1+I_2+I_12)*labda - mu*S - beta_1*S*I_1 - epsilon_1*beta_12s*S*I_12 - epsilon_12*beta_12s*S*I_12 - epsilon_2*beta_12s*S*I_2 - beta_2*S*I_2
-	I_1dt = beta_1*S*I_1 + epsilon_1*beta_12s*S*I_12 - (mu+alpha_1)*I_1 - beta_12*I_1*I_2 - beta_1_12*I_1*I_12
-	I_2dt = beta_2*S*I_2 + epsilon_2*beta_12s*S*I_2 - (mu+alpha_2)*I_2 - beta_21*I_1*I_2 - beta_2_12*I_2*I_12
+	Sdt = (S+I_1+I_2+I_12)*labda - mu*S - beta_1*S*I_1 - beta_2*S*I_2
+	I_1dt = beta_1*S*I_1 - (mu+alpha_1)*I_1 - beta_12*I_1*I_2 - beta_1_12*I_1*I_12
+	I_2dt = beta_2*S*I_2 - (mu+alpha_2)*I_2 - beta_21*I_1*I_2 - beta_2_12*I_2*I_12
 	I_12dt = beta_12*I_1*I_2 + beta_1_12*I_1*I_12 + beta_21*I_1*I_2 + beta_2_12*I_2*I_12 - (mu+alpha_12)*I_12
 
 	return Sdt, I_1dt, I_2dt, I_12dt
@@ -87,3 +83,4 @@ plt.legend(loc="best")
 plt.xlabel("t")
 plt.grid()
 plt.show()
+

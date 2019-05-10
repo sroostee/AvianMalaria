@@ -35,3 +35,4 @@ R_0 = (beta_e*x)/(mu + alpha_e)
 B_e = beta_e/(mu + alpha_e)
 
 #R_0 = B_e*x
+
