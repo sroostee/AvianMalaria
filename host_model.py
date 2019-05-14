@@ -15,72 +15,66 @@ Inspired by van Baalen (1995) et al. and Alizon (2008) (Multiple infections etc)
 import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
-
-import numpy as np
-from scipy.integrate import odeint
-import matplotlib.pyplot as plt
+import withinHost_model as inHost
 
 ###########################		start parameters	###############################
 
-S0 = 28 #Susceptibles at time 0
+S_0 = 299 #Susceptibles at time 0
 I_1_0 = 1 #Individuals infected with strain 1 (the resident strain)
 I_2_0 = 1 #Individuals infected with strain 2 (the rare mutant)
 I_12_0 = 0 #Individuals infected with both
 
-#transmission rates
-beta_1 = 0.02
-beta_1_12 = 0.02
-beta_12 = 0.02
-beta_2 = 0.02
-beta_2_12 = 0.02
-beta_21 = 0.02
-beta_12s = 0.02
+n1_eq = inHost.n1[-1] #number of copies of strain 1 at equilibrium
+n2_eq = inHost.n2[-1] #number of copies of strain 2 at equilibrium
 
-#mortality rates caused by parasite
-alpha_1 = 0.02
-alpha_12 = 0.02
-alpha_2 = 0.02
-
-#host natural death rate
-mu = 0.02
-#host reproduction rate
-labda = 0.02
+mu = 0.05 #natural death rate
+labda = 0.9#birth rate
 
 #time
-ntimepoints = 1000
-t = np.linspace(0,200, ntimepoints)
+ntimepoints_sys = 1000
+time = np.linspace(0,40, ntimepoints_sys)
 
-def eq_sys(y, t, beta_1, beta_2, beta_1_12, beta_2_12, beta_12s, 
-	alpha_1, alpha_2, alpha_12, mu, labda, epsilon_1, epsilon_2, epsilon_12):
+def eq_sys(y, t, c_delta, c_beta, h, n1, n2, mu, labda):
 
 	#Defining the system of equations 
+
+	beta_1 = inHost.beta_pop(c_beta, n1, h)
+	beta_2 = inHost.beta_pop(c_beta, n2, h)
+
+	delta_1 = inHost.delta_pop(c_delta, n1, 0)
+	delta_2 = inHost.delta_pop(c_delta, 0, n2)
+	delta_12 = inHost.delta_pop(c_delta, n1, n2)
 
 	S = y[0]
 	I_1 = y[1]
 	I_2 = y[2]
 	I_12 = y[3]
 
-	Sdt = (S+I_1+I_2+I_12)*labda - mu*S - beta_1*S*I_1 - beta_2*S*I_2
-	I_1dt = beta_1*S*I_1 - (mu+alpha_1)*I_1 - beta_12*I_1*I_2 - beta_1_12*I_1*I_12
-	I_2dt = beta_2*S*I_2 - (mu+alpha_2)*I_2 - beta_21*I_1*I_2 - beta_2_12*I_2*I_12
-	I_12dt = beta_12*I_1*I_2 + beta_1_12*I_1*I_12 + beta_21*I_1*I_2 + beta_2_12*I_2*I_12 - (mu+alpha_12)*I_12
+	dSdt = labda * (S+I_1+I_2+I_12) - mu*S -beta_1*S*I_1 - beta_2*S*I_2
 
-	return Sdt, I_1dt, I_2dt, I_12dt
+	dI1dt = beta_1*S*I_1 - (mu+delta_1)*I_1 - beta_2*I_1*I_2 - beta_2*I_1*I_12
 
-y0 = (S0, I_1_0, I_2_0, I_12_0)
+	dI2dt = beta_2*S*I_2 - (mu+delta_2)*I_2 - beta_1*I_1*I_2 
 
-out = odeint(eq_sys, y0, t, args =(beta_1, beta_2, beta_1_12, beta_2_12, beta_12s, 
-	alpha_1, alpha_2, alpha_12, mu, labda, epsilon_1, epsilon_2, epsilon_12))
-S,I_1,I_2,I_12= out.T
+	dI12dt = beta_1*I_1*I_2 + beta_2*I_1*I_2 + beta_2*I_1*I_12 - (mu+delta_12)*I_12
+
+	return dSdt, dI1dt, dI2dt, dI12dt
+
+y0 = (S_0, I_1_0, I_2_0, I_12_0)
+
+out = odeint(eq_sys, y0, time, args =(inHost.c_delta, inHost.c_beta, inHost.h, n1_eq, n2_eq, mu, labda))
+S, I_1, I_2, I_12 = out.T
 
 ###########################		Plot system		################################ 
+#only plot if this is the main script
+if __name__ == "__main__":
 
-plt.plot(t, S, label="Susceptibles")
-plt.plot(t, I_1, label="Infected with strain 1")
-plt.plot(t, I_2, label="Infected with strain 2")
-plt.plot(t, I_12, label="Infected with both")
-plt.legend(loc="best")
-plt.xlabel("t")
-plt.grid()
-plt.show()
+	plt.plot(time, S, label="Susceptibles")
+	plt.plot(time, I_1, label="Infected with strain 1")
+	plt.plot(time, I_2, label="Infected with strain 2")
+	plt.plot(time, I_12, label="Infected with both")
+	plt.legend(loc="best")
+	plt.xlabel("t")
+	plt.grid()
+	plt.show()
 

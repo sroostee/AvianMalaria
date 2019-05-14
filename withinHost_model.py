@@ -4,14 +4,15 @@
 date: 01/04/2019
 author. S.J. Roostee
 
-An SIB-model modelling the number of Susceptibles, Infected, and infected with Both malaria strains
-individuals over time. 
-Inspired by van Baalen (1995) et al. and Alizon (2008) (Multiple infections etc)
-
+Modelling the dynamics of within-host competition of malaria parasites in avian malaria.
+The dynamics follow Lotka-Volterra competition of two competitors which has the form of:
+dNidt = ri*Ni*(1-((Ni+alphaij*Nj)/Ki))
+dNjdt = rj*Nj*(1-((Nj+alphaji*Ni)/Kj))
 
 Assumptions:
 
 	- Within-host dynamics follow Lotka-Volterra competition
+	- Only two competitors are present
 
 """
 ###########################
@@ -19,7 +20,6 @@ Assumptions:
 import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
-
 
 ###########################		start parameters	###############################
 
@@ -29,8 +29,8 @@ r1 = 0.2
 r2 = 0.5
 K1= 10
 K2 = 10
-alpha12 = 0.1
-alpha21 = 0.1
+alpha12 = 1.1
+alpha21 = 1.1
 
 #time
 ntimepoints = 1000
@@ -52,27 +52,7 @@ out = odeint(LotkaVolterraCompetition, n0, t, args =(r1, r2, K1, K2, alpha12, al
 
 n1, n2 = out.T
 
-###########################		Plot system	over time	################################ 
-
-plt.plot(t, n1, label="Strain 1")
-plt.plot(t, n2, label="Strain 2")
-plt.legend(loc="best")
-plt.xlabel("t")
-plt.ylabel("number of copies")
-plt.grid()
-plt.show()
-
-###########################		Plot system	isoclines	################################ 
-plt.plot([0,K2/alpha21],[K2,0], color = "blue", label = "isocline for N1")
-plt.plot([0,max(K1, K2/alpha21)+2], [0,0], color = "blue")
-plt.plot([0,K1],[K1/alpha12,0], color = "orange", label = "isocline for N2")
-plt.plot([0,0], [0,max(K2, K1/alpha12)+2], color = "orange")
-plt.axis([-1, max(K1, K2/alpha21)+1, -1, max(K2, K1/alpha12)+1])
-plt.legend(loc="best")
-plt.grid()
-plt.show()
-
-###########################		Population model 	####################################
+###########	Effect of within-host dynamics on delta and beta in the population model 	###########
 
 c_delta = 0.8
 c_beta = 0.02
@@ -98,68 +78,40 @@ delta_all = delta_pop(c_delta, n1, n2)
 beta_n1 = beta_pop(c_beta, n1, h)
 beta_n2 = beta_pop(c_beta, n2, h)
 
-plt.plot(t, delta_n1, label = "delta n1")
-plt.plot(t, delta_n2, label = "delta n2")
-plt.plot(t, delta_all, label = "delta all")
-plt.plot(t, beta_n1, label = "beta n1")
-plt.plot(t, beta_n2, label = "beta n2")
-plt.legend(loc="best")
-plt.grid()
-plt.show()
+if __name__ == "__main__":
 
-# S0 = 290 #Susceptibles at time 0
-# I_1_0 = 9 #Individuals infected with strain 1 (the resident strain)
-# I_2_0 = 1 #Individuals infected with strain 2 (the rare mutant)
-# I_12_0 = 0 #Individuals infected with both
+###########################		Plot within-host system	over time	################################ 
 
-# n1_eq = n1[-1] #number of copies of strain 1 at equilibrium
-# n2_eq = n2[-1] #number of copies of strain 2 at equilibrium
+	plt.plot(t, n1, label="Strain 1")
+	plt.plot(t, n2, label="Strain 2")
+	plt.legend(loc="best")
+	plt.xlabel("t")
+	plt.ylabel("number of copies")
+	plt.grid()
+	plt.show()
 
-# mu = 0.5 #natural death rate
+	###########################		Plot system	isoclines	########################################## 
+	plt.plot([0,K2/alpha21],[K2,0], color = "blue", label = "isocline for N1")
+	plt.plot([0,max(K1, K2/alpha21)+2], [0,0], color = "blue")
+	plt.plot([0,K1],[K1/alpha12,0], color = "orange", label = "isocline for N2")
+	plt.plot([0,0], [0,max(K2, K1/alpha12)+2], color = "orange")
+	plt.axis([-1, max(K1, K2/alpha21)+1, -1, max(K2, K1/alpha12)+1])
+	plt.legend(loc="best")
+	plt.grid()
+	plt.show()
 
-# #time
-# ntimepoints_sys = 1000
-# time = np.linspace(0,200, ntimepoints_sys)
+	plt.plot(t, delta_n1, label = "delta n1")
+	plt.plot(t, delta_n2, label = "delta n2")
+	plt.plot(t, delta_all, label = "delta all")
+	plt.legend(loc="best")
+	plt.grid()
+	plt.show()
 
-# def eq_sys(y, t, c_delta, c_beta, h, n1, n2, mu, S0, I_1_0):
-
-# 	#Defining the system of equations 
-
-# 	beta_1 = beta_pop(c_beta, n1, h)
-# 	beta_2 = beta_pop(c_beta, n2, h)
-
-# 	delta_2 = delta_pop(c_delta, 0, n2)
-# 	delta_12 = delta_pop(c_delta, n1, n2)
-
-# 	S = S0
-# 	I_1 = I_1_0
-
-# 	I_2 = y[0]
-# 	I_12 = y[1]
-
-# 	dI2dt = beta_2*S*I_2 - (mu+delta_2)*I_2 - beta_1*I_1*I_2 
-
-# 	dI12dt = beta_1*I_1*I_2 + beta_2*I_1*I_2 + beta_2*I_1*I_12 - (mu+delta_12)*I_12
-
-# 	return dI2dt, dI12dt
-
-# y0 = (I_2_0, I_12_0)
-
-# out = odeint(eq_sys, y0, time, args =(c_delta, c_beta, h, n1_eq, n2_eq, mu, S0, I_1_0))
-# I_2, I_12 = out.T
-
-# ###########################		Plot system		################################ 
-
-# plt.semilogy(time, I_2, label="Infected with strain 2")
-# plt.semilogy(time, I_12, label="Double infection (12)")
-# #plt.axis([0, 10, 0, 1000])
-# plt.legend(loc="best")
-# plt.xlabel("t")
-# plt.grid()
-# plt.show()
-
-
-
+	plt.plot(t, beta_n1, label = "beta n1")
+	plt.plot(t, beta_n2, label = "beta n2")
+	plt.legend(loc="best")
+	plt.grid()
+	plt.show()
 
 ############################  some playing around with direction fields		############
 
