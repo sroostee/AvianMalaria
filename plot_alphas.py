@@ -12,70 +12,81 @@ number of double infected hosts.
 
 import numpy as np
 from scipy.integrate import odeint
+import pandas as pd
 # import matplotlib as mpl
 import matplotlib.pyplot as plt
-# from mpl_toolkits.mplot3d import Axes3D
-# from matplotlib import cm
-# from matplotlib.ticker import LinearLocator, FormatStrFormatter
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import seaborn as sns
 import withinHost_model as inHost
 import host_model as host
 
-# alpha_ij = np.arange(0.1,0.9,0.05)
-# alpha_ji = np.arange(0.1,0.9,0.05)
-# alpha_ij2 = np.arange(1.1, 1.5, 0.05)
-# alpha_ji2 = np.arange(1.1, 1.5, 0.05)
-# alpha_ij = np.concatenate([alpha_ij, alpha_ij2])
-# alpha_ji = np.concatenate([alpha_ji, alpha_ji2])
+######################### generate alpha values ############################
+alpha_ij = np.arange(0.1,0.9,0.1)
+alpha_ji = np.arange(0.1,0.9,0.1)
+alpha_ij2 = np.arange(1.1, 1.5, 0.1)
+alpha_ji2 = np.arange(1.1, 1.5, 0.1)
+alpha_ij = np.concatenate([alpha_ij, alpha_ij2])
+alpha_ji = np.concatenate([alpha_ji, alpha_ji2])
 
-# i_ij = []
+i_ij = []
 
-# for a_i in alpha_ij:
-# 	for a_j in alpha_ji:
-# 		withinHost_out = odeint(inHost.LotkaVolterraCompetition, inHost.n0, inHost.t, 
-# 			args =(inHost.r1, inHost.r2, inHost.K1, inHost.K2, a_i, a_j))
-# 		n1, n2 = withinHost_out.T
-# 		n1_eq = n1[-1]
-# 		n2_eq = n2[-1]
-# 		host_out = odeint(host.eq_sys, host.y0, host.time, args =(inHost.c_delta, inHost.c_beta, inHost.h, 
-# 			n1_eq, n2_eq, host.mu, host.labda))
-# 		S, I_1, I_2, I_12 = host_out.T
-# 		I_12 = I_12[-1]
-# 		i_ij.append(I_12)
+for a_i in alpha_ij:
+	for a_j in alpha_ji:
+		#calculate copies of each strain in the host
+		withinHost_out = odeint(inHost.LotkaVolterraCompetition, inHost.n0, inHost.t, 
+			args =(inHost.r1, inHost.r2, inHost.K1, inHost.K2, a_i, a_j))
+		n1, n2 = withinHost_out.T
+		n1_eq = n1[-1]
+		n2_eq = n2[-1]
+		#calculate the number of hosts with a double infection
+		host_out = odeint(host.eq_sys, host.y0, host.time, args =(inHost.c_delta1, inHost.c_delta2, inHost.c_beta, inHost.h, 
+			n1_eq, n2_eq, host.mu, host.labda))
+		S, I_1, I_2, I_12 = host_out.T
+		I_12 = I_12[-1]
+		i_ij.append(I_12)
+
+
+i_ij = np.reshape(i_ij, (12,12))
+
+# I_to_alphas = pd.DataFrame(i_ij)
+# print(I_to_alphas)
+# I_to_alphas = pd.DataFrame(
+# 	{'alpha_ij': alpha_ij,
+# 	'alpha_ji': alpha_ji, 
+# 	'I_ij': i_ij})
 
 # print("I values for alpha <1 calculated")
-# ALPHA_ij, ALPHA_ji = np.meshgrid(alpha_ij, alpha_ji)
-# i_ij = np.array(i_ij)
-# I_ij = np.reshape(i_ij, (24,24))
+ALPHA_ij, ALPHA_ji = np.meshgrid(alpha_ij, alpha_ji)
+i_ij = np.array(i_ij)
+I_ij = np.reshape(i_ij, (12,12))
 
 ########################	PLOT 	###########################################
 
 ############## heatmap
-sns.set()
-uniform_data = np.random.rand(10, 12)
-print(uniform_data.shape)
-ax = sns.heatmap(uniform_data)
+# I_to_alphas = I_to_alphas.pivot("alpha_ij", "alpha_ji", "I_ij")
+ax = sns.heatmap(i_ij)
 plt.show()
-print("finished")
 
 # ############ 3D surface map
 
-# fig = plt.figure()
-# ax = fig.gca(projection='3d')
+fig = plt.figure()
+ax = fig.gca(projection='3d')
 
-# #Plot the surface.
-# surf = ax.plot_surface(ALPHA_ij, ALPHA_ji, I_ij, cmap=cm.coolwarm,
-#                        linewidth=0, antialiased=False)
+#Plot the surface.
+surf = ax.plot_surface(ALPHA_ij, ALPHA_ji, I_ij, cmap=cm.coolwarm,
+                       linewidth=0, antialiased=False)
 
-# # Customize the z axis.
-# ax.set_zlim(-1, 35)
-# ax.zaxis.set_major_locator(LinearLocator(10))
-# ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+# Customize the z axis.
+ax.set_zlim(-1, 35)
+ax.zaxis.set_major_locator(LinearLocator(10))
+ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 
-# # Add a color bar which maps values to colors.
-# fig.colorbar(surf, shrink=0.5, aspect=5)
+# Add a color bar which maps values to colors.
+fig.colorbar(surf, shrink=0.5, aspect=5)
 
-# plt.show()
+plt.show()
 
 
 

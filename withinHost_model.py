@@ -25,12 +25,12 @@ import matplotlib.pyplot as plt
 
 n1_0 = 1
 n2_0 = 1
-r1 = 0.2
-r2 = 0.5
+r1 = .5
+r2 = .5
 K1= 10
 K2 = 10
-alpha12 = 1.1
-alpha21 = 1.1
+alpha12 = .8
+alpha21 = .8
 
 #time
 ntimepoints = 1000
@@ -54,14 +54,15 @@ n1, n2 = out.T
 
 ###########	Effect of within-host dynamics on delta and beta in the population model 	###########
 
-c_delta = 0.8
-c_beta = 0.02
-h = 0.5
+c_delta1 = 0.00008
+c_delta2 = 0.00008
+c_beta = 0.0001
+h = 0.05
 
-def delta_pop(c_delta, n1, n2):
+def delta_pop(c_delta1, c_delta2, n1, n2):
 	#calculation on parasite dependent death rate
 	# the more copies a host contains the higher the parasite-caused death rate is
-	delta = c_delta*(n1+n2)
+	delta = c_delta1*n1+c_delta2*n2
 	return delta 
 
 def beta_pop(c_b, n, h):
@@ -72,9 +73,9 @@ def beta_pop(c_b, n, h):
 
 ###########################		a and beta over time depending on n1 and n2 	#######
 
-delta_n1 = delta_pop(c_delta, n1, 0)
-delta_n2 = delta_pop(c_delta, 0, n2)
-delta_all = delta_pop(c_delta, n1, n2)
+delta_n1 = delta_pop(c_delta1, c_delta2, n1, 0)
+delta_n2 = delta_pop(c_delta1, c_delta2, 0, n2)
+delta_all = delta_pop(c_delta1, c_delta2, n1, n2)
 beta_n1 = beta_pop(c_beta, n1, h)
 beta_n2 = beta_pop(c_beta, n2, h)
 
