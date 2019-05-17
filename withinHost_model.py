@@ -71,7 +71,7 @@ def beta_pop(c_b, n, h):
 	beta = (c_b*n)/(1+h*n)
 	return beta
 
-###########################		a and beta over time depending on n1 and n2 	#######
+###########################		delta and beta over time depending on n1 and n2 	#######
 
 delta_n1 = delta_pop(c_delta1, c_delta2, n1, 0)
 delta_n2 = delta_pop(c_delta1, c_delta2, 0, n2)
