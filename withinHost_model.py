@@ -36,6 +36,12 @@ alpha21 = .8
 ntimepoints = 1000
 t = np.linspace(0,100, ntimepoints)
 
+############ parameters for delta and beta in host model
+c_delta1 = 0.0008
+c_delta2 = 0.0008
+c_beta = 0.0001
+h = 0.05
+
 ###########################		growth functions	###############################
 
 def LotkaVolterraCompetition(n, t, r1, r2, K1, K2, alpha12, alpha21):
@@ -46,18 +52,7 @@ def LotkaVolterraCompetition(n, t, r1, r2, K1, K2, alpha12, alpha21):
 	dN2dt = r2*N2*(1-((N2+alpha21*N1)/K2))
 	return dN1dt, dN2dt
 
-n0 = (n1_0, n2_0)
-
-out = odeint(LotkaVolterraCompetition, n0, t, args =(r1, r2, K1, K2, alpha12, alpha21))
-
-n1, n2 = out.T
-
 ###########	Effect of within-host dynamics on delta and beta in the population model 	###########
-
-c_delta1 = 0.00008
-c_delta2 = 0.00008
-c_beta = 0.0001
-h = 0.05
 
 def delta_pop(c_delta1, c_delta2, n1, n2):
 	#calculation on parasite dependent death rate
@@ -71,15 +66,24 @@ def beta_pop(c_b, n, h):
 	beta = (c_b*n)/(1+h*n)
 	return beta
 
-###########################		delta and beta over time depending on n1 and n2 	#######
-
-delta_n1 = delta_pop(c_delta1, c_delta2, n1, 0)
-delta_n2 = delta_pop(c_delta1, c_delta2, 0, n2)
-delta_all = delta_pop(c_delta1, c_delta2, n1, n2)
-beta_n1 = beta_pop(c_beta, n1, h)
-beta_n2 = beta_pop(c_beta, n2, h)
 
 if __name__ == "__main__":
+
+	######################		run ODE system		##################################################
+
+	n0 = (n1_0, n2_0)
+
+	out = odeint(LotkaVolterraCompetition, n0, t, args =(r1, r2, K1, K2, alpha12, alpha21))
+
+	n1, n2 = out.T
+
+	###########################		delta and beta over time depending on n1 and n2 	#######
+
+	delta_n1 = delta_pop(c_delta1, c_delta2, n1, 0)
+	delta_n2 = delta_pop(c_delta1, c_delta2, 0, n2)
+	delta_all = delta_pop(c_delta1, c_delta2, n1, n2)
+	beta_n1 = beta_pop(c_beta, n1, h)
+	beta_n2 = beta_pop(c_beta, n2, h)
 
 ###########################		Plot within-host system	over time	################################ 
 
