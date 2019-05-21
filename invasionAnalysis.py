@@ -62,7 +62,7 @@ def eq_sys(y, t, c_delta1, c_delta2, c_beta, h, n1, n2, n1_12, n2_12, mu, S0, I_
 	I_2 = y[0]
 	I_12 = y[1]
 
-	dI2dt = beta_2*S*I_2 - (mu+delta_2)*I_2 - beta_1*I_1*I_2 
+	dI2dt = beta_2*S*I_2 + beta_1_12*S*I_12 - (mu+delta_2)*I_2 - beta_1*I_1*I_2 
 
 	dI12dt = beta_1*I_1*I_2 + beta_2*I_1*I_2 + beta_2_12*I_1*I_12 - (mu+delta_12)*I_12
 

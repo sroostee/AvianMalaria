@@ -29,11 +29,11 @@ r1 = .5
 r2 = .5
 K1= 10
 K2 = 10
-alpha12 = .8
-alpha21 = .8
+alpha12 = .5
+alpha21 = .5
 
 #time
-ntimepoints = 1000
+ntimepoints = 100
 t = np.linspace(0,100, ntimepoints)
 
 ############ parameters for delta and beta in host model
@@ -88,7 +88,7 @@ if __name__ == "__main__":
 ###########################		Plot within-host system	over time	################################ 
 
 	plt.plot(t, n1, label="Strain 1")
-	plt.plot(t, n2, label="Strain 2")
+	plt.plot(t, n2, 'bo', label="Strain 2")
 	plt.legend(loc="best")
 	plt.xlabel("t")
 	plt.ylabel("number of copies")

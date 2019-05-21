@@ -24,8 +24,8 @@ import withinHost_model as inHost
 import host_model as host
 
 ######################### generate K values ############################
-K_1 = np.arange(5,16,1)
-K_2 = np.arange(5,16,1)
+K_1 = np.arange(3,20,.5)
+K_2 = np.arange(3,20,.5)
 
 i_ij = []
 K_1_ij = []
@@ -45,7 +45,7 @@ for k1 in K_1:
 		n2_12 = (k2 - inHost.alpha21 * k1)/(1- inHost.alpha12*inHost.alpha21) 
 		#calculate the number of hosts with a double infection
 		host_out = odeint(host.eq_sys, host.y0, host.time, args =(inHost.c_delta1, inHost.c_delta2, 
-			inHost.c_beta, inHost.h, n1, n2, n1_12, n2_12, host.mu, host.labda))
+			inHost.c_beta, inHost.h, n1, n2, n1_12, n2_12, host.mu, host.labda, host.l))
 		S, I_1, I_2, I_12 = host_out.T
 		I_12 = I_12[-1]
 		i_ij.append(I_12)
