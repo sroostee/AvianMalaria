@@ -19,8 +19,8 @@ import withinHost_model as inHost
 
 ###########################		start parameters	###############################
 
-S_0 = 500 #Susceptibles at time 0
-I_1_0 = 3 #Individuals infected with strain 1 (the resident strain)
+S_0 = 56 #Susceptibles at time 0
+I_1_0 = 700 #Individuals infected with strain 1 (the resident strain)
 I_2_0 = 1#Individuals infected with strain 2 (the rare mutant)
 I_12_0 = 0 #Individuals infected with both
 
@@ -31,13 +31,13 @@ n2 = inHost.K2
 n1_12 = (inHost.K1 - inHost.alpha12 * inHost.K2)/(1- inHost.alpha12*inHost.alpha21) 
 n2_12 = (inHost.K2 - inHost.alpha21 * inHost.K1)/(1- inHost.alpha12*inHost.alpha21) 
 
-mu = 0.05 #natural death rate
-labda = 0.057#birth rate 
-l = 1500 #relating to carrying capacity of hosts
+mu = 0.03 #natural death rate
+labda = 0.05#birth rate 
+l = 3000 #relating to carrying capacity of hosts
 
 #time
 ntimepoints_sys = 20000
-time = np.linspace(0,100, ntimepoints_sys)
+time = np.linspace(0,300, ntimepoints_sys)
 
 def eq_sys(y, t, c_delta1, c_delta2, c_beta, h, n1, n2, n1_12, n2_12, mu, labda, l):
 
@@ -86,7 +86,7 @@ if __name__ == "__main__":
 	plt.plot(time, I_1, label="Infected with strain 1")
 	plt.plot(time, I_2, label="Infected with strain 2")
 	plt.plot(time, I_12, label="Infected with both")
-	plt.axis([0,100,0,2000])
+	plt.axis([0,100,0,1000])
 	plt.legend(loc="best")
 	plt.xlabel("t")
 	plt.grid()
