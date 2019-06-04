@@ -25,11 +25,6 @@ import withinHost_model as inHost
 
 ###########################		start parameters	###############################
 
-S0 = 1000 #Susceptibles at time 0
-I_1_0 = 50 #Individuals infected with strain 1 (the resident strain)
-I_2_0 = 1 #Individuals infected with strain 2 (the rare mutant)
-I_12_0 = 0 #Individuals infected with both
-
 # number of copies of both strains
 n1 = inHost.K1
 n2 = inHost.K2
@@ -37,7 +32,19 @@ n2 = inHost.K2
 n1_12 = (inHost.K1 - inHost.alpha12 * inHost.K2)/(1- inHost.alpha12*inHost.alpha21) 
 n2_12 = (inHost.K2 - inHost.alpha21 * inHost.K1)/(1- inHost.alpha12*inHost.alpha21) 
 
-mu = 0.05 #natural death rate
+mu = 0.03 #natural death rate
+labda = 0.05#birth rate 
+l = 1000 #relating to carrying capacity of hosts
+
+delta_1 = inHost.delta_pop(inHost.c_delta1, inHost.c_delta2, n1, 0)
+beta_1 = inHost.beta_pop(inHost.c_beta, n1, inHost.h)
+
+S0 = (mu + delta_1)/beta_1 #Susceptibles at time 0
+I_1_0 = (-2*labda*(delta_1+mu) - beta_1*l*(delta_1-labda+mu)+
+	np.sqrt(beta_1)*np.sqrt(l) * np.sqrt(4*delta_1*labda* (delta_1+mu) + beta_1*l*(delta_1-labda+mu)**2))/(2*beta_1*labda)
+#Individuals infected with strain 1 (the resident strain)
+I_2_0 = 1#Individuals infected with strain 2 (the rare mutant)
+I_12_0 = 0 #Individuals infected with both
 
 #time
 ntimepoints_sys = 20000

@@ -29,16 +29,16 @@ r1 = .5
 r2 = .5
 K1= 10
 K2 = 10
-alpha12 = .5
-alpha21 = .5
+alpha12 = 1.5
+alpha21 = 1.5
 
 #time
 ntimepoints = 100
 t = np.linspace(0,100, ntimepoints)
 
 ############ parameters for delta and beta in host model
-c_delta1 = 0.0008
-c_delta2 = 0.0008
+c_delta1 = 0.005
+c_delta2 = 0.005
 c_beta = 0.0001
 h = 0.05
 

@@ -13,7 +13,6 @@ number of double infected hosts.
 import numpy as np
 from scipy.integrate import odeint
 import pandas as pd
-# import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
@@ -38,6 +37,7 @@ for a_i in alpha_ij:
 		a_ij.append(a_i)
 		a_ji.append(a_j)
 		if a_i == 1 and a_j == 1:
+			#quick fix to capture error
 			i_1.append(float('nan'))
 			i_2.append(float('nan'))
 			i_ij.append(float('nan'))
@@ -87,24 +87,6 @@ ax = sns.heatmap(I12_to_alphas, xticklabels=I12_to_alphas.columns.values.round(2
                  yticklabels=I12_to_alphas.index.values.round(2), cbar_kws={'label': 'hosts infected by strain 1 and 2'})
 plt.show()
 
-# ############ 3D surface map
-
-# fig = plt.figure()
-# ax = fig.gca(projection='3d')
-
-# #Plot the surface.
-# surf = ax.plot_surface(ALPHA_ij, ALPHA_ji, I_ij, cmap=cm.coolwarm,
-#                        linewidth=0, antialiased=False)
-
-# # Customize the z axis.
-# ax.set_zlim(--1, )
-# ax.zaxis.set_major_locator(LinearLocator(10))
-# ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-
-# # Add a color bar which maps values to colors.
-# fig.colorbar(surf, shrink=0.5, aspect=5)
-
-# plt.show()
 
 
 

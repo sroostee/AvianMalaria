@@ -24,8 +24,8 @@ import withinHost_model as inHost
 import host_model as host
 
 ######################### generate alpha values ############################
-c_delta1 = np.arange(0.0001,0.01,0.0005)
-c_delta2 = np.arange(0.0001,0.01,0.0005)
+c_delta1 = np.arange(0.0001,0.01,0.001)
+c_delta2 = np.arange(0.0001,0.01,0.001)
 
 i_1 = []
 i_2 = []
@@ -59,7 +59,7 @@ for c_1 in c_delta1:
 I1_cdelta_df = pd.DataFrame(dict(c_delta1 = c_d1, c_delta2 = c_d2, I1 = i_1))
 I1_to_cdeltas = I1_cdelta_df.pivot("c_delta1", "c_delta2", "I1")
 
-I2_cdelta_df = pd.DataFrame(dict(c_delta1 = c_d1, c_delta2 = c_d2,  I2 = i_2))
+I2_cdelta_df = pd.DataFrame(dict(c_delta1 = c_d1, c_delta2 = c_d2, I2 = i_2))
 I2_to_cdeltas = I2_cdelta_df.pivot("c_delta1", "c_delta2", "I2")
 
 I12_cdelta_df = pd.DataFrame(dict(c_delta1 = c_d1, c_delta2 = c_d2,  I12 = i_ij))
@@ -68,16 +68,20 @@ I12_to_cdeltas = I12_cdelta_df.pivot("c_delta1", "c_delta2", "I12")
 ########################	PLOT 	###########################################
 
 ############## heatmap
-ax = sns.heatmap(I1_to_cdeltas, xticklabels=I1_to_cdeltas.columns.values.round(4),
-                 yticklabels=I1_to_cdeltas.index.values.round(4), cbar_kws={'label': 'hosts infected by strain 1'})
+ax = sns.heatmap(I1_to_cdeltas, yticklabels=I2_to_cdeltas.index.values.round(4), cbar_kws={'label': 'hosts infected by strain 1'})
 plt.show()
 
 ############## heatmap
-ax = sns.heatmap(I2_to_cdeltas, xticklabels=I2_to_cdeltas.columns.values.round(4),
-                 yticklabels=I2_to_cdeltas.index.values.round(4), cbar_kws={'label': 'hosts infected by strain 2'})
+ax = sns.heatmap(I2_to_cdeltas, yticklabels=I2_to_cdeltas.index.values.round(4), cbar_kws={'label': 'hosts infected by strain 2'})
 plt.show()
 
-############## heatmap
+# ############## heatmap
 ax = sns.heatmap(I12_to_cdeltas, xticklabels=I12_to_cdeltas.columns.values.round(4),
-                 yticklabels=I12_to_cdeltas.index.values.round(4), cbar_kws={'label': 'hosts infected by strain 1 and 2'}, annot= True)
+                 yticklabels=I12_to_cdeltas.index.values.round(4), cbar_kws={'label': 'hosts infected by strain 1 and 2'})
 plt.show()
+
+
+
+
+
+
