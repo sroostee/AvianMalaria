@@ -13,7 +13,7 @@ number of double infected hosts.
 import numpy as np
 from scipy.integrate import odeint
 import pandas as pd
-# import matplotlib as mpl
+import matplotlib 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
@@ -74,14 +74,22 @@ D_to_Ks = D_K_df.pivot("K1", "K2", "deceased")
 
 ########################	PLOT 	###########################################
 
+############################	increase font size for plotting		#######################
+
+font = {'family' : 'monospace',
+        'weight' : 'bold',
+        'size'   : 20}
+
+matplotlib.rc('font', **font)  # pass in the font dict as kwargs
+
 ############## heatmap
-ax = sns.heatmap(data = I1_to_Ks, cbar_kws={'label': 'hosts infected by strain 1'})
+ax = sns.heatmap(data = I1_to_Ks, cbar_kws={'label': 'I1'})
 plt.show()
 
-ax = sns.heatmap(data = I2_to_Ks, cbar_kws={'label': 'hosts infected by strain 2'})
+ax = sns.heatmap(data = I2_to_Ks, cbar_kws={'label': 'I2'})
 plt.show()
 
-ax = sns.heatmap(data = I12_to_Ks, cbar_kws={'label': 'hosts infected by both'})
+ax = sns.heatmap(data = I12_to_Ks, cbar_kws={'label': 'I12'})
 plt.show()
 
 ax = sns.heatmap(data = D_to_Ks, cbar_kws={'label': 'deceased hosts'})

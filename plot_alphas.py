@@ -13,6 +13,7 @@ number of double infected hosts.
 import numpy as np
 from scipy.integrate import odeint
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
@@ -81,101 +82,30 @@ D_to_alphas = D_alpha_df.pivot("alphaij", "alphaji", "deceased")
 
 ########################	PLOT 	###########################################
 
+############################	increase font size for plotting		#######################
+
+font = {'family' : 'monospace',
+        'weight' : 'bold',
+        'size'   : 20}
+
+matplotlib.rc('font', **font)  # pass in the font dict as kwargs
+
 ############## heatmap
 ax = sns.heatmap(I1_to_alphas, vmin = -1, xticklabels=I1_to_alphas.columns.values.round(2),
-                 yticklabels=I1_to_alphas.index.values.round(2), cbar_kws={'label': 'hosts infected by strain 1'})
+                 yticklabels=I1_to_alphas.index.values.round(2), cbar_kws={'label': 'I1'})
 plt.show()
 
 ############## heatmap
 ax = sns.heatmap(I2_to_alphas, vmin=-1, xticklabels=I2_to_alphas.columns.values.round(2),
-                 yticklabels=I2_to_alphas.index.values.round(2), cbar_kws={'label': 'hosts infected by strain 2'})
+                 yticklabels=I2_to_alphas.index.values.round(2), cbar_kws={'label': 'I2'})
 plt.show()
 
 ############## heatmap
 ax = sns.heatmap(I12_to_alphas, vmin=-1, xticklabels=I12_to_alphas.columns.values.round(2),
-                 yticklabels=I12_to_alphas.index.values.round(2), cbar_kws={'label': 'hosts infected by strain 1 and 2'})
+                 yticklabels=I12_to_alphas.index.values.round(2), cbar_kws={'label': 'I12'})
 plt.show()
 
 ############## heatmap
 ax = sns.heatmap(D_to_alphas, xticklabels=D_to_alphas.columns.values.round(2),
                  yticklabels=D_to_alphas.index.values.round(2), cbar_kws={'label': 'deceased hosts'})
 plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-############# go to alpha > 1 loop ############
-
-# alphap_ij = np.arange(1.2,1.5,0.1)
-# alphap_ji = np.arange(1.2,1.5,0.1)
-
-# ip_ij = []
-
-# print("In the >1 loop now.")
-
-# for ap_i in alphap_ij:
-# 	for ap_j in alphap_ji:
-# 		withinHost_out = odeint(inHost.LotkaVolterraCompetition, inHost.n0, inHost.t, 
-# 			args =(inHost.r1, inHost.r2, inHost.K1, inHost.K2, ap_i, ap_j))
-# 		n1, n2 = withinHost_out.T
-# 		n1_eq = n1[-1]
-# 		n2_eq = n2[-1]
-# 		host_out = odeint(host.eq_sys, host.y0, host.time, args =(inHost.c_delta, inHost.c_beta, inHost.h, 
-# 			n1_eq, n2_eq, host.mu, host.labda))
-# 		S, I_1, I_2, Ip_12 = host_out.T
-# 		Ip_12 = Ip_12[-1]
-# 		ip_ij.append(Ip_12)
-
-# print("I values for alpha <1 calculated")
-# ALPHAp_ij, ALPHAp_ji = np.meshgrid(alphap_ij, alphap_ji)
-# ip_ij = np.array(ip_ij)
-# Ip_ij = np.reshape(ip_ij, (4,4))
-
-################### go to next plot ####################
-
-# fig = plt.figure()
-# ax = fig.gca(projection='3d')
-
-# #Plot the surface.
-# surf = ax.plot_surface(ALPHAp_ij, ALPHAp_ji, Ip_ij, cmap=cm.coolwarm,
-#                        linewidth=0, antialiased=False)
-
-# # Customize the z axis.
-# ax.set_zlim(-1, 30)
-# ax.zaxis.set_major_locator(LinearLocator(10))
-# ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-
-# # Add a color bar which maps values to colors.
-# fig.colorbar(surf, shrink=0.5, aspect=5)
-
-# plt.show()

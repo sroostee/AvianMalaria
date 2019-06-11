@@ -19,7 +19,9 @@ Assumptions:
 
 import numpy as np
 from scipy.integrate import odeint
+import matplotlib
 import matplotlib.pyplot as plt
+
 
 ###########################		start parameters	###############################
 
@@ -77,18 +79,40 @@ if __name__ == "__main__":
 
 	n1, n2 = out.T
 
+	n0_single1 = (1,0)
+	n0_single2 = (0,1)
+
+	out_singlen1 = odeint(LotkaVolterraCompetition, n0_single1, t, args =(r1, r2, K1, K2, alpha12, alpha21))
+	out_singlen2 = odeint(LotkaVolterraCompetition, n0_single2, t, args =(r1, r2, K1, K2, alpha12, alpha21))
+
+	n1_single, n2_non = out_singlen1.T
+	n1_non, n2_single = out_singlen2.T
+
+	############################	increase font size for plotting		#######################
+
+	font = {'family' : 'monospace',
+        'weight' : 'bold',
+        'size'   : 20}
+
+	matplotlib.rc('font', **font)  # pass in the font dict as kwargs
+
+
 	###########################		delta and beta over time depending on n1 and n2 	#######
 
-	delta_n1 = delta_pop(c_delta1, c_delta2, n1, 0)
-	delta_n2 = delta_pop(c_delta1, c_delta2, 0, n2)
-	delta_all = delta_pop(c_delta1, c_delta2, n1, n2)
-	beta_n1 = beta_pop(c_beta, n1, h)
-	beta_n2 = beta_pop(c_beta, n2, h)
+	delta_n1 = delta_pop(c_delta1, c_delta2, n1_single, 0)
+	delta_n2 = delta_pop(c_delta1, c_delta2, 0, n2_single)
+	delta_co = delta_pop(c_delta1, c_delta2, n1, n2)
+	beta_n1 = beta_pop(c_beta, n1_single, h)
+	beta_n2 = beta_pop(c_beta, n2_single, h)
+	beta_n1_co = beta_pop(c_beta, n1, h)
+	beta_n2_co = beta_pop(c_beta, n2, h)
 
 ###########################		Plot within-host system	over time	################################ 
 
-	plt.plot(t, n1, label="Strain 1")
-	plt.plot(t, n2, 'bo', label="Strain 2")
+	plt.plot(t, n1_single, 's', color = 'blue' , label="strain 1")
+	plt.plot(t, n2_single, ':', color = 'orange' , label="strain 2")
+	plt.plot(t, n1, 'P', color = "blue", label="strain 1 co")
+	plt.plot(t, n2, '-', color = 'orange' , label="strain 2 co")
 	plt.legend(loc="best")
 	plt.xlabel("t")
 	plt.ylabel("number of copies")
@@ -96,50 +120,34 @@ if __name__ == "__main__":
 	plt.show()
 
 	###########################		Plot system	isoclines	########################################## 
-	plt.plot([0,K2/alpha21],[K2,0], color = "blue", label = "isocline for N1")
+	plt.plot([0,K2/alpha21],[K2,0], color = "blue", label = "n1")
 	plt.plot([0,max(K1, K2/alpha21)+2], [0,0], color = "blue")
-	plt.plot([0,K1],[K1/alpha12,0], color = "orange", label = "isocline for N2")
+	plt.plot([0,K1],[K1/alpha12,0], color = "orange", label = "n2")
 	plt.plot([0,0], [0,max(K2, K1/alpha12)+2], color = "orange")
 	plt.axis([-1, max(K1, K2/alpha21)+1, -1, max(K2, K1/alpha12)+1])
 	plt.legend(loc="best")
+	plt.xlabel("n1")
+	plt.ylabel("n2")
 	plt.grid()
 	plt.show()
 
-	plt.plot(t, delta_n1, label = "delta n1")
-	plt.plot(t, delta_n2, label = "delta n2")
-	plt.plot(t, delta_all, label = "delta all")
+	plt.plot(t, delta_n1, 's', color = "blue", label = r'$\delta$ n1')
+	plt.plot(t, delta_n2, ':', color = "orange", label = r'$\delta$ n2')
+	plt.plot(t, delta_co, '-.', color = "deeppink", label = r'$\delta$ co')
 	plt.legend(loc="best")
+	plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+	plt.xlabel("t")
+	plt.ylabel(r'$\delta$')
 	plt.grid()
 	plt.show()
 
-	plt.plot(t, beta_n1, label = "beta n1")
-	plt.plot(t, beta_n2, label = "beta n2")
+	plt.plot(t, beta_n1, 's',  color = "blue", label = r'$\beta$ n1')
+	plt.plot(t, beta_n2,':',  color = "orange", label = r'$\beta$ n2')	
+	plt.plot(t, beta_n1_co, 'P',  color = "blue", label = r'$\beta$ n1 co')
+	plt.plot(t, beta_n2_co, '-', color = "orange", label = r'$\beta$ n2 co')
+	plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+	plt.xlabel("t")
 	plt.legend(loc="best")
+	plt.ylabel(r'$\beta$')
 	plt.grid()
 	plt.show()
-
-############################  some playing around with direction fields		############
-
-
-# X = np.arange(-10, 10, 1)
-# Y = np.arange(-10, 10, 1)
-# U, V = np.meshgrid(X**2, Y**2)
-
-# fig, ax = plt.subplots()
-# q = ax.quiver(X, Y, U, V)
-# ax.quiverkey(q, X=0.3, Y=1.1, U=10,
-#              label='Quiver key, length = 10', labelpos='E')
-
-# plt.show()
-
-# xmax = 4.0
-# xmin = -xmax
-# D = 20
-# ymax = 4.0
-# ymin = -ymax
-# x = np.linspace(xmin, xmax, D)
-# y = np.linspace(ymin, ymax, D)
-# X, Y = np.meshgrid(x, y)
-# deg = np.arctan(Y**2 - X)
-# QP = plt.quiver(X,Y,np.cos(deg),np.sin(deg))
-# plt.show()

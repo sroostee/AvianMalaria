@@ -13,7 +13,7 @@ number of double infected hosts.
 import numpy as np
 from scipy.integrate import odeint
 import pandas as pd
-# import matplotlib as mpl
+import matplotlib 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
@@ -73,17 +73,25 @@ D_to_cdeltas = D_cdelta_df.pivot("c_delta1", "c_delta2", "deceased")
 
 ########################	PLOT 	###########################################
 
+############################	increase font size for plotting		#######################
+
+font = {'family' : 'monospace',
+        'weight' : 'bold',
+        'size'   : 20}
+
+matplotlib.rc('font', **font)  # pass in the font dict as kwargs
+
 ############## heatmap
-ax = sns.heatmap(I1_to_cdeltas, yticklabels=I2_to_cdeltas.index.values.round(4), cbar_kws={'label': 'hosts infected by strain 1'})
+ax = sns.heatmap(I1_to_cdeltas, yticklabels=I2_to_cdeltas.index.values.round(4), cbar_kws={'label': 'I1'})
 plt.show()
 
 ############## heatmap
-ax = sns.heatmap(I2_to_cdeltas, yticklabels=I2_to_cdeltas.index.values.round(4), cbar_kws={'label': 'hosts infected by strain 2'})
+ax = sns.heatmap(I2_to_cdeltas, yticklabels=I2_to_cdeltas.index.values.round(4), cbar_kws={'label': 'I2'})
 plt.show()
 
 # ############## heatmap
 ax = sns.heatmap(I12_to_cdeltas, xticklabels=I12_to_cdeltas.columns.values.round(4),
-                 yticklabels=I12_to_cdeltas.index.values.round(4), cbar_kws={'label': 'hosts infected by strain 1 and 2'})
+                 yticklabels=I12_to_cdeltas.index.values.round(4), cbar_kws={'label': 'I12'})
 plt.show()
 
 ax = sns.heatmap(D_to_cdeltas, xticklabels=D_to_cdeltas.columns.values.round(4),
