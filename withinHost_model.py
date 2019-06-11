@@ -27,10 +27,12 @@ n1_0 = 1
 n2_0 = 1
 r1 = .5
 r2 = .5
-K1= 10
-K2 = 10
-alpha12 = 1.5
-alpha21 = 1.5
+K1= 5
+K2 = 5
+alpha12 = .5
+alpha21 = .5
+
+n0 = (n1_0, n2_0)
 
 #time
 ntimepoints = 100
@@ -63,15 +65,13 @@ def delta_pop(c_delta1, c_delta2, n1, n2):
 def beta_pop(c_b, n, h):
 	#caculation on parasote dependent transmission rate
 	#the more copies a host contains the higher the transmission rate is, but with a max
-	beta = (c_b*n)/(1+h*n)
+	beta = (c_b*n)/(1+(h*n))
 	return beta
 
 
 if __name__ == "__main__":
 
 	######################		run ODE system		##################################################
-
-	n0 = (n1_0, n2_0)
 
 	out = odeint(LotkaVolterraCompetition, n0, t, args =(r1, r2, K1, K2, alpha12, alpha21))
 

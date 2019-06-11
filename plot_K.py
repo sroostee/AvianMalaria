@@ -24,12 +24,13 @@ import withinHost_model as inHost
 import host_model as host
 
 ######################### generate K values ############################
-K_1 = np.arange(3,20,.5)
-K_2 = np.arange(3,20,.5)
+K_1 = np.arange(3,15,.5)
+K_2 = np.arange(3,15,.5)
 
 i_1 = []
 i_2 = []
-i_ij = []
+i_12 = []
+dead = []
 K_1_ij = []
 K_2_ij = []
 
@@ -48,13 +49,16 @@ for k1 in K_1:
 		#calculate the number of hosts with a double infection
 		host_out = odeint(host.eq_sys, host.y0, host.time, args =(inHost.c_delta1, inHost.c_delta2, 
 			inHost.c_beta, inHost.h, n1, n2, n1_12, n2_12, host.mu, host.labda, host.l))
-		S, I_1, I_2, I_12 = host_out.T
+		S, I_1, I_2, I_12, dead_host = host_out.T
 		I_1 = I_1[-1]
 		I_2 = I_2[-1]
 		I_12 = I_12[-1]
+		dead_host = dead_host[-1]
 		i_1.append(I_1)
 		i_2.append(I_2)
-		i_ij.append(I_12)
+		i_12.append(I_12)
+		dead.append(dead_host)
+
 
 I1_K_df = pd.DataFrame(dict(K1 = K_1_ij, K2 = K_2_ij, I12 = i_1))
 I1_to_Ks = I1_K_df.pivot("K1", "K2", "I12")
@@ -62,8 +66,11 @@ I1_to_Ks = I1_K_df.pivot("K1", "K2", "I12")
 I2_K_df = pd.DataFrame(dict(K1 = K_1_ij, K2 = K_2_ij, I12 = i_2))
 I2_to_Ks = I2_K_df.pivot("K1", "K2", "I12")
 
-I12_K_df = pd.DataFrame(dict(K1 = K_1_ij, K2 = K_2_ij, I12 = i_ij))
+I12_K_df = pd.DataFrame(dict(K1 = K_1_ij, K2 = K_2_ij, I12 = i_12))
 I12_to_Ks = I12_K_df.pivot("K1", "K2", "I12")
+
+D_K_df = pd.DataFrame(dict(K1 = K_1_ij, K2 = K_2_ij, deceased = dead))
+D_to_Ks = D_K_df.pivot("K1", "K2", "deceased")
 
 ########################	PLOT 	###########################################
 
@@ -77,26 +84,7 @@ plt.show()
 ax = sns.heatmap(data = I12_to_Ks, cbar_kws={'label': 'hosts infected by both'})
 plt.show()
 
-# # ############ 3D surface map
-
-# fig = plt.figure()
-# ax = fig.gca(projection='3d')
-
-# #Plot the surface.
-# surf = ax.plot_surface(ALPHA_ij, ALPHA_ji, I_ij, cmap=cm.coolwarm,
-#                        linewidth=0, antialiased=False)
-
-# # Customize the z axis.
-# ax.set_zlim(-1, 35)
-# ax.zaxis.set_major_locator(LinearLocator(10))
-# ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-
-# # Add a color bar which maps values to colors.
-# fig.colorbar(surf, shrink=0.5, aspect=5)
-
-# plt.show()
-
-
-
+ax = sns.heatmap(data = D_to_Ks, cbar_kws={'label': 'deceased hosts'})
+plt.show()
 
 

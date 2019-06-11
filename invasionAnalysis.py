@@ -32,6 +32,12 @@ n2 = inHost.K2
 n1_12 = (inHost.K1 - inHost.alpha12 * inHost.K2)/(1- inHost.alpha12*inHost.alpha21) 
 n2_12 = (inHost.K2 - inHost.alpha21 * inHost.K1)/(1- inHost.alpha12*inHost.alpha21) 
 
+if n1_12 < 0:
+	n1_12 = 0
+
+if n2_12 < 0:
+	n2_12 = 0
+
 mu = 0.03 #natural death rate
 labda = 0.05#birth rate 
 l = 1000 #relating to carrying capacity of hosts
