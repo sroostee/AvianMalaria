@@ -24,13 +24,15 @@ import withinHost_model as inHost
 import host_model as host
 
 ######################### generate alpha values ############################
-alpha_ij = np.arange(0.1,1.0,0.1)
-alpha_ji = np.arange(0.1,1.0,0.1)
+alpha_ij = np.arange(0.1,1.0,0.05)
+alpha_ji = np.arange(0.1,1.0,0.05)
 
+s = []
 i_1 = []
 i_2 = []
 i_ij = []
 dead = []
+host_total = []
 a_ij = []
 a_ji = []
 
@@ -56,15 +58,21 @@ for a_i in alpha_ij:
 		#calculate the number of hosts with a double infection
 		host_out = odeint(host.eq_sys, host.y0, host.time, args =(inHost.c_delta1, inHost.c_delta2, inHost.c_beta, inHost.h, n1, n2, n1_12, n2_12, host.mu, host.labda, host.l))
 		S, I_1, I_2, I_12, dead_host = host_out.T
+		S = S[-1]
 		I_1 = I_1[-1]
 		I_2 = I_2[-1]
 		I_12 = I_12[-1]
 		dead_host = dead_host[-1]
+		s.append(S)
 		i_1.append(I_1)
 		i_2.append(I_2)
 		i_ij.append(I_12)
 		dead.append(dead_host)
+		host_total.append(S+I_1+I_2+I_12)
 
+
+S_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, S = s))
+S_to_alphas = S_alpha_df.pivot("alphaij", "alphaji", "S")
 
 I1_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, I1 = i_1))
 I1_to_alphas = I1_alpha_df.pivot("alphaij", "alphaji", "I1")
@@ -80,6 +88,11 @@ I12_to_alphas = I12_alpha_df.pivot("alphaij", "alphaji", "I12")
 D_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, deceased = dead))
 D_to_alphas = D_alpha_df.pivot("alphaij", "alphaji", "deceased")
 
+dead_fraction = [di/hi for di,hi in zip(dead,host_total)]
+
+Df_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, deceased_fraction = dead_fraction))
+Df_to_alphas = Df_alpha_df.pivot("alphaij", "alphaji", "deceased_fraction")
+
 ########################	PLOT 	###########################################
 
 ############################	increase font size for plotting		#######################
@@ -89,6 +102,11 @@ font = {'family' : 'monospace',
         'size'   : 20}
 
 matplotlib.rc('font', **font)  # pass in the font dict as kwargs
+
+############## heatmap
+ax = sns.heatmap(S_to_alphas, vmin = -1, xticklabels=S_to_alphas.columns.values.round(2),
+                 yticklabels=S_to_alphas.index.values.round(2), cbar_kws={'label': 'S'})
+plt.show()
 
 ############## heatmap
 ax = sns.heatmap(I1_to_alphas, vmin = -1, xticklabels=I1_to_alphas.columns.values.round(2),
@@ -108,4 +126,9 @@ plt.show()
 ############## heatmap
 ax = sns.heatmap(D_to_alphas, xticklabels=D_to_alphas.columns.values.round(2),
                  yticklabels=D_to_alphas.index.values.round(2), cbar_kws={'label': 'deceased hosts'})
+plt.show()
+
+############## heatmap
+ax = sns.heatmap(Df_to_alphas, xticklabels=Df_to_alphas.columns.values.round(2),
+                 yticklabels=Df_to_alphas.index.values.round(2), cbar_kws={'label': 'deceased hosts as fraction'})
 plt.show()
