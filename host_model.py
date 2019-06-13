@@ -47,6 +47,7 @@ I_1_0 = (-2*labda*(delta_1+mu) - beta_1*l*(delta_1-labda+mu)+
 #Individuals infected with strain 1 (the resident strain)
 I_2_0 = 1#Individuals infected with strain 2 (the rare mutant)
 I_12_0 = 0 #Individuals infected with both
+DI_0 = 0 #deceased hosts through infection
 D_0 = 0 #deceased hosts total
 
 #time
@@ -70,7 +71,8 @@ def eq_sys(y, t, c_delta1, c_delta2, c_beta, h, n1, n2, n1_12, n2_12, mu, labda,
 	I_1 = y[1]
 	I_2 = y[2]
 	I_12 = y[3]
-	D = y[4]
+	DI = y[4]
+	D = y[5]
 
 	dSdt = labda*(S+I_1+I_2+I_12) *(1-(S+I_1+I_2+I_12)/l)  - mu*S -beta_1*S*I_1 - beta_2*S*I_2 - beta_1_12*S*I_12 - beta_2_12*S*I_12
 
@@ -80,15 +82,17 @@ def eq_sys(y, t, c_delta1, c_delta2, c_beta, h, n1, n2, n1_12, n2_12, mu, labda,
 
 	dI12dt = beta_1*I_1*I_2 + beta_2*I_1*I_2 + beta_2_12*I_1*I_12 + beta_1_12*I_2*I_12 - (mu+delta_12)*I_12
 
+	dDIdt = delta_1*I_1 + delta_2*I_2 + delta_12*I_12
+
 	dDdt = mu*S + (mu+delta_1)*I_1 + (mu+delta_2)*I_2 + (mu+delta_12)*I_12
 
-	return dSdt, dI1dt, dI2dt, dI12dt, dDdt
+	return dSdt, dI1dt, dI2dt, dI12dt, dDIdt, dDdt
 
-y0 = (S_0, I_1_0, I_2_0, I_12_0, D_0)
+y0 = (S_0, I_1_0, I_2_0, I_12_0, DI_0, D_0)
 
 out = odeint(eq_sys, y0, time, args =(inHost.c_delta1, inHost.c_delta2, inHost.c_beta, 
 	inHost.h, n1, n2, n1_12, n2_12, mu, labda, l))
-S, I_1, I_2, I_12, D = out.T
+S, I_1, I_2, I_12, DI, D = out.T
 
 ###########################		Plot system		################################ 
 #only plot if this is the main script
@@ -105,6 +109,7 @@ if __name__ == "__main__":
 	plt.show()
 
 	plt.plot(time, D, label = "Deceased hosts")
+	plt.plot(time, DI, label = "Deceased hosts though infection")
 	plt.legend(loc="best")
 	plt.grid()
 	plt.show()

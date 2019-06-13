@@ -24,15 +24,15 @@ import withinHost_model as inHost
 import host_model as host
 
 ######################### generate alpha values ############################
-alpha_ij = np.arange(0.1,1.0,0.05)
-alpha_ji = np.arange(0.1,1.0,0.05)
+alpha_ij = np.arange(0.1,1.0,0.1)
+alpha_ji = np.arange(0.1,1.0,0.1)
 
 s = []
 i_1 = []
 i_2 = []
 i_ij = []
-dead = []
-host_total = []
+dead_inf = []
+dead_total = []
 a_ij = []
 a_ji = []
 
@@ -57,27 +57,27 @@ for a_i in alpha_ij:
 		n2 = inHost.K2 
 		#calculate the number of hosts with a double infection
 		host_out = odeint(host.eq_sys, host.y0, host.time, args =(inHost.c_delta1, inHost.c_delta2, inHost.c_beta, inHost.h, n1, n2, n1_12, n2_12, host.mu, host.labda, host.l))
-		S, I_1, I_2, I_12, dead_host = host_out.T
+		S, I_1, I_2, I_12, dead_i, dead_host = host_out.T
 		S = S[-1]
 		I_1 = I_1[-1]
 		I_2 = I_2[-1]
 		I_12 = I_12[-1]
+		dead_i = dead_i[-1]
 		dead_host = dead_host[-1]
 		s.append(S)
 		i_1.append(I_1)
 		i_2.append(I_2)
 		i_ij.append(I_12)
-		dead.append(dead_host)
-		host_total.append(S+I_1+I_2+I_12)
+		dead_inf.append(dead_i)
+		dead_total.append(dead_host)
 
+print(dead_inf)
 
 S_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, S = s))
 S_to_alphas = S_alpha_df.pivot("alphaij", "alphaji", "S")
 
 I1_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, I1 = i_1))
 I1_to_alphas = I1_alpha_df.pivot("alphaij", "alphaji", "I1")
-# print(I1_alpha_df)
-# print(I1_to_alphas)
 
 I2_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, I2 = i_2))
 I2_to_alphas = I2_alpha_df.pivot("alphaij", "alphaji", "I2")
@@ -85,13 +85,14 @@ I2_to_alphas = I2_alpha_df.pivot("alphaij", "alphaji", "I2")
 I12_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, I12 = i_ij))
 I12_to_alphas = I12_alpha_df.pivot("alphaij", "alphaji", "I12")
 
-D_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, deceased = dead))
+D_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, deceased = dead_total))
 D_to_alphas = D_alpha_df.pivot("alphaij", "alphaji", "deceased")
 
-dead_fraction = [di/hi for di,hi in zip(dead,host_total)]
+dead_fraction = [di/dt for di,dt in zip(dead_inf,dead_total)]
 
 Df_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, deceased_fraction = dead_fraction))
 Df_to_alphas = Df_alpha_df.pivot("alphaij", "alphaji", "deceased_fraction")
+print(Df_alpha_df)
 
 ########################	PLOT 	###########################################
 
@@ -130,5 +131,5 @@ plt.show()
 
 ############## heatmap
 ax = sns.heatmap(Df_to_alphas, xticklabels=Df_to_alphas.columns.values.round(2),
-                 yticklabels=Df_to_alphas.index.values.round(2), cbar_kws={'label': 'deceased hosts as fraction'})
+                 yticklabels=Df_to_alphas.index.values.round(2), cbar_kws={'label': 'deceased hosts through infection'})
 plt.show()
