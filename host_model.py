@@ -84,7 +84,7 @@ def eq_sys(y, t, c_delta1, c_delta2, c_beta, h, n1, n2, n1_12, n2_12, mu, labda,
 
 	dDIdt = delta_1*I_1 + delta_2*I_2 + delta_12*I_12
 
-	dDdt = mu*S + (mu+delta_1)*I_1 + (mu+delta_2)*I_2 + (mu+delta_12)*I_12
+	dDdt = mu* (S+I_1+I_2+I_12)
 
 	return dSdt, dI1dt, dI2dt, dI12dt, dDIdt, dDdt
 

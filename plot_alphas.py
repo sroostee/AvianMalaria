@@ -32,6 +32,7 @@ i_1 = []
 i_2 = []
 i_ij = []
 dead_inf = []
+dead_normal = []
 dead_total = []
 a_ij = []
 a_ji = []
@@ -40,7 +41,6 @@ for a_i in alpha_ij:
 	for a_j in alpha_ji:
 		a_ij.append(a_i)
 		a_ji.append(a_j)
-
 		#calculate copies of each strain in the host
 		if a_i == 1 and a_j == 1:
 			#special case where intra- and interspecies competition is the same
@@ -69,9 +69,9 @@ for a_i in alpha_ij:
 		i_2.append(I_2)
 		i_ij.append(I_12)
 		dead_inf.append(dead_i)
-		dead_total.append(dead_host)
+		dead_normal.append(dead_host)
+		dead_total.append(dead_host + dead_i)
 
-print(dead_inf)
 
 S_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, S = s))
 S_to_alphas = S_alpha_df.pivot("alphaij", "alphaji", "S")
@@ -85,14 +85,15 @@ I2_to_alphas = I2_alpha_df.pivot("alphaij", "alphaji", "I2")
 I12_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, I12 = i_ij))
 I12_to_alphas = I12_alpha_df.pivot("alphaij", "alphaji", "I12")
 
-D_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, deceased = dead_total))
+dead_norm_frac= [di/dt for di,dt in zip(dead_normal,dead_total)]
+
+D_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, deceased = dead_norm_frac))
 D_to_alphas = D_alpha_df.pivot("alphaij", "alphaji", "deceased")
 
-dead_fraction = [di/dt for di,dt in zip(dead_inf,dead_total)]
+dead_inf_fraction = [di/dt for di,dt in zip(dead_inf,dead_total)]
 
-Df_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, deceased_fraction = dead_fraction))
+Df_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, deceased_fraction = dead_inf_fraction))
 Df_to_alphas = Df_alpha_df.pivot("alphaij", "alphaji", "deceased_fraction")
-print(Df_alpha_df)
 
 ########################	PLOT 	###########################################
 
