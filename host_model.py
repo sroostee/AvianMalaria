@@ -4,12 +4,18 @@
 date: 01/04/2019
 author. S.J. Roostee
 
-An SIB-model modelling the number of Susceptibles, Infected, and infected with Both malaria strains
+An SII-model modelling the number of Susceptibles, Infected, and Infected with Both malaria strains
 individuals over time. 
 Inspired by van Baalen (1995) et al. and Alizon (2008) (Multiple infections etc)
 
+Assumptions:
+	-No direct change from susceptible to co-infection
+
+User defined functions:
+- eq_sys: describing the ODE system of the co-infection model
+
 """
-###########################
+###########################		module import 		###############################
 
 
 import numpy as np

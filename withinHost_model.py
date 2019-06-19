@@ -14,14 +14,18 @@ Assumptions:
 	- Within-host dynamics follow Lotka-Volterra competition
 	- Only two competitors are present
 
+User defined functions:
+- LotkaVolterraCompetition: function for the ODE of Lotka-Volterra competition dynamics
+- delta_pop: calculation of delta for the host population through values of n1 and n2
+- beta_pop: calculation of beta for the host population through the values of n1 and n2
+
 """
-###########################
+###########################		module import 		###############################
 
 import numpy as np
 from scipy.integrate import odeint
 import matplotlib
 import matplotlib.pyplot as plt
-
 
 ###########################		start parameters	###############################
 
@@ -71,6 +75,7 @@ def beta_pop(c_b, n, h):
 	return beta
 
 
+# only do this if it is the main plot
 if __name__ == "__main__":
 
 	######################		run ODE system		##################################################
@@ -131,6 +136,8 @@ if __name__ == "__main__":
 	plt.grid()
 	plt.show()
 
+	##########################		Plot delta values over time ######################################
+
 	plt.plot(t, delta_n1, 's', color = "blue", label = r'$\delta$ n1')
 	plt.plot(t, delta_n2, ':', color = "orange", label = r'$\delta$ n2')
 	plt.plot(t, delta_co, '-.', color = "deeppink", label = r'$\delta$ co')
@@ -140,6 +147,8 @@ if __name__ == "__main__":
 	plt.ylabel(r'$\delta$')
 	plt.grid()
 	plt.show()
+
+	###########################3	Plot beta values over time ########################################
 
 	plt.plot(t, beta_n1, 's',  color = "blue", label = r'$\beta$ n1')
 	plt.plot(t, beta_n2,':',  color = "orange", label = r'$\beta$ n2')	

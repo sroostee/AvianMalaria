@@ -4,22 +4,18 @@
 date: 01/04/2019
 author. S.J. Roostee
 
-Script written to visualise the effect of the Lotka-Volterra competition parameters on the 
-number of double infected hosts. 
+Visualisation of the effect of the varying infection dependent death rate 
+values on the host population
 
 """
-###########################
+###########################		module import 		###############################
 
 import numpy as np
 from scipy.integrate import odeint
 import pandas as pd
 import matplotlib 
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import seaborn as sns
-import pandas as pd
 import withinHost_model as inHost
 import host_model as host
 

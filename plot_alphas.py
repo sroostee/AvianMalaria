@@ -4,22 +4,18 @@
 date: 01/04/2019
 author. S.J. Roostee
 
-Script written to visualise the effect of the Lotka-Volterra competition parameters on the 
-number of double infected hosts. 
+Visualisation of the effect of the varying competition coefficient values 
+in Lotka-Volterra dynamics on the host population
 
 """
-###########################
+###########################		module import 		###############################
 
 import numpy as np
 from scipy.integrate import odeint
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import seaborn as sns
-import pandas as pd
 import withinHost_model as inHost
 import host_model as host
 
@@ -73,27 +69,27 @@ for a_i in alpha_ij:
 		dead_total.append(dead_host + dead_i)
 
 
-S_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, S = s))
-S_to_alphas = S_alpha_df.pivot("alphaij", "alphaji", "S")
+S_alpha_df = pd.DataFrame(dict(alpha12 = a_ij, alpha21 = a_ji, S = s))
+S_to_alphas = S_alpha_df.pivot("alpha12", "alpha21", "S")
 
-I1_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, I1 = i_1))
-I1_to_alphas = I1_alpha_df.pivot("alphaij", "alphaji", "I1")
+I1_alpha_df = pd.DataFrame(dict(alpha12 = a_ij, alpha21 = a_ji, I1 = i_1))
+I1_to_alphas = I1_alpha_df.pivot("alpha12", "alpha21", "I1")
 
-I2_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, I2 = i_2))
-I2_to_alphas = I2_alpha_df.pivot("alphaij", "alphaji", "I2")
+I2_alpha_df = pd.DataFrame(dict(alpha12 = a_ij, alpha21 = a_ji, I2 = i_2))
+I2_to_alphas = I2_alpha_df.pivot("alpha12", "alpha21", "I2")
 
-I12_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, I12 = i_ij))
-I12_to_alphas = I12_alpha_df.pivot("alphaij", "alphaji", "I12")
+I12_alpha_df = pd.DataFrame(dict(alpha12 = a_ij, alpha21 = a_ji, I12 = i_ij))
+I12_to_alphas = I12_alpha_df.pivot("alpha12", "alpha21", "I12")
 
 dead_norm_frac= [di/dt for di,dt in zip(dead_normal,dead_total)]
 
-D_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, deceased = dead_norm_frac))
-D_to_alphas = D_alpha_df.pivot("alphaij", "alphaji", "deceased")
+D_alpha_df = pd.DataFrame(dict(alpha12 = a_ij, alpha21 = a_ji, deceased = dead_total))
+D_to_alphas = D_alpha_df.pivot("alpha12", "alpha21", "deceased")
 
 dead_inf_fraction = [di/dt for di,dt in zip(dead_inf,dead_total)]
 
-Df_alpha_df = pd.DataFrame(dict(alphaij = a_ij, alphaji = a_ji, deceased_fraction = dead_inf_fraction))
-Df_to_alphas = Df_alpha_df.pivot("alphaij", "alphaji", "deceased_fraction")
+Df_alpha_df = pd.DataFrame(dict(alpha12 = a_ij, alpha21 = a_ji, deceased_fraction = dead_inf_fraction))
+Df_to_alphas = Df_alpha_df.pivot("alpha12", "alpha21", "deceased_fraction")
 
 ########################	PLOT 	###########################################
 

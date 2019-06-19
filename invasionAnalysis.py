@@ -15,6 +15,9 @@ Assumptions:
 	- S and I1 (the resident strain) are already at equilibrium at the start and static
 	- The order of infection does not matter for the double infections
 
+User defined functions:
+- eq_sys: describing the ODE system of the co-infection model at the start of infection (invasion)
+
 """
 ###########################		module import 		###############################
 
