@@ -3,24 +3,19 @@ Date: 19th June 2019
 
 # Project Overview:
 
-	This project describes an SIR-based co-infection model. The host dynamics 
-	have been linked to the within-host dynamics through the transmission and infection
-	dependent death rate. Within-host dynamics are described with Lotka-Volterra competition
-	dynamics. 
-	Variables values are defined in the script and linked between scripts. This means a change in a
- 	withinHost_model variable value affects the host_model output, but can also affect the plot outputs.
+This project describes an SIR-based co-infection model. The host dynamics have been linked to the within-host dynamics through the transmission and infection dependent death rate. Within-host dynamics are described with Lotka-Volterra competition dynamics. Variables values are defined in the script and linked between scripts. This means a change in a withinHost_model variable value affects the host_model output, but can also affect the plot outputs.
 
 ## Scripts in this prject:
 
 ### Models:
-	withinHost_model.py
-	invasionAnalysis.py
-	host_model.py
+- withinHost_model.py
+- invasionAnalysis.py
+- host_model.py
 		
 ### Plotting of varying parameter values and effect on host population:
-	plot_alphas.py
-	plot_K.py
-	cdelta_plot.py
+- plot_alphas.py
+- plot_K.py
+- cdelta_plot.py
 
 
 # Software:
