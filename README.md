@@ -1,7 +1,7 @@
-#AvianMalaria
+# AvianMalaria
 Date: 19th June 2019
 
-#Project Overview:
+# Project Overview:
 
 	This project describes an SIR-based co-infection model. The host dynamics 
 	have been linked to the within-host dynamics through the transmission and infection
@@ -23,11 +23,11 @@ Date: 19th June 2019
 	cdelta_plot.py
 
 
-#Software:
+# Software:
 
 Python 3.7.1
 
-###packages: 
+### packages: 
  
 numpy (version 1.16.2)
 matplotlib (version 3.0.3)
@@ -35,8 +35,8 @@ scipy (version 1.2.1)
 seaborn (version 0.9.0)
 pandas (version 0.24.2)
 
-Authors:
-	Suze Roostee (supervised by Jörgen Ripa)
+## Authors:
+Suze Roostee (supervised by Jörgen Ripa)
 
-Future recommendations:
-	change in-script changes to loading variables through an initiation file (INI)
+## Future recommendations:
+change in-script changes to loading variables through an initiation file (INI)
