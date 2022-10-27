@@ -37,6 +37,3 @@ Python 3.7.1
 
 ## Authors:
 Suze Roostee (supervised by Jörgen Ripa)
-
-## Future recommendations:
-change in-script changes to loading variables through an initiation file (INI)
