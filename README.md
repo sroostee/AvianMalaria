@@ -29,11 +29,11 @@ Python 3.7.1
 
 ### packages: 
  
-numpy (version 1.16.2)
-matplotlib (version 3.0.3)
-scipy (version 1.2.1)
-seaborn (version 0.9.0)
-pandas (version 0.24.2)
+- numpy (version 1.16.2)
+- matplotlib (version 3.0.3)
+- scipy (version 1.2.1)
+- seaborn (version 0.9.0)
+- pandas (version 0.24.2)
 
 ## Authors:
 Suze Roostee (supervised by Jörgen Ripa)
